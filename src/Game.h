@@ -2,6 +2,7 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <SFML/Graphics.hpp>
 
 class Screen;
 
@@ -14,6 +15,11 @@ public:
 	construits dans cette méthode.
 	*/
 	void init();
+
+	/* Permet de récupérer la fenêtre SFML 
+	utilisée par le jeu.
+	*/
+	sf::RenderWindow* getWindow() const;
 
 	/* Permet de récupérer les menu associé à l'indentifiant
 	id dans Game::menus.
@@ -41,6 +47,11 @@ public:
 	void nextLevel();
 
 private:
+
+	/* La fenêtre SFML utilisée par 
+	le jeu.
+	*/
+	std::unique_ptr<sf::RenderWindow> window;
 
 	/* Les menus du jeu.
 	Les menus sont des écrans comme les
