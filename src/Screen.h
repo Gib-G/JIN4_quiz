@@ -33,7 +33,7 @@ public:
 
 	/* Gère les mises-à-jour "spontanées" (ne dépendant
 	pas d'événements utilisateurs) de l'écran.
-	Comme chaque écran possède des processus de mise-à-jour différents,
+	Comme chaque écran possède des procédures de mise-à-jour différents,
 	cette méthode utilise une stratégie héritant de
 	l'interface UpdateStrategy.
 	Cette stratégie est contenue dans Screen::updateStrategy.
