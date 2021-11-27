@@ -1,2 +1,6 @@
-# Ignore directory used by Visual Studio for project generation
-build
+# Ignore build directories
+/build/
+/out/
+
+# Ignore IDE config
+/.vs/
