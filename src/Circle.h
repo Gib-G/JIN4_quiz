@@ -27,8 +27,6 @@ public:
 
 	void setNumberOfSides(int nb);
 
-	bool verify() override { return false; };
-
 	sf::Color getColor() const;
 
 private:

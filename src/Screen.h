@@ -2,11 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include "Element.h"
 #include <pugixml.hpp>
-#include <vector>
-#include <UpdateStrategy.h>
 
 class Game;
-class LevelUpdateStrategy;
+class UpdateStrategy;
+class EventHandler;
 
 class Screen {
 
@@ -14,7 +13,7 @@ public:
 
 	explicit Screen(Game* game, pugi::xml_node const &node);
 
-	Screen(Game* game, std::unique_ptr<LevelUpdateStrategy> updateStrategy, sf::Color const &backgroundColor);
+	Screen(Game* game, std::unique_ptr<EventHandler> eventHandler, std::unique_ptr<UpdateStrategy> updateStrategy, sf::Color const &backgroundColor);
 
 	/* Affiche l'écran.
 	Cette méthode appelle successivement les méthodes
@@ -34,7 +33,7 @@ public:
 
 	/* Gère les mises-à-jour "spontanées" (ne dépendant
 	pas d'événements utilisateurs) de l'écran.
-	Comme chaque écran possède des processus de mise-à-jour différents,
+	Comme chaque écran possède des procédures de mise-à-jour différents,
 	cette méthode utilise une stratégie héritant de
 	l'interface UpdateStrategy.
 	Cette stratégie est contenue dans Screen::updateStrategy.
@@ -90,6 +89,12 @@ private:
 	*/
 	std::vector<std::unique_ptr<Element>> elements;
 
+	/* Le gestionnaire d'événements utilisateur à
+	utiliser pour l'écran
+	(cf. Screen::handleEvent(...)).
+	*/
+	std::unique_ptr<EventHandler> eventHandler;
+
 	/* La stratégie de mise-à-jour spontanée de
 	l'écran
 	(cf. Screen::update()).
@@ -99,7 +104,6 @@ private:
 	/* La couleur de fond de l'écran.
 	*/
 	sf::Color backgroundColor;
-
 
 };
 

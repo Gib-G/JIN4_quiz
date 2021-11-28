@@ -6,9 +6,16 @@
 #include "Sprite.h"
 #include "Rectangle.h"
 #include "Circle.h"
+#include "WinLoseEventHandler.h"
 #include "WinLoseUpdateStrategy.h"
+#include "Level1EventHandler.h"
+#include "Level1UpdateStrategy.h"
+#include "Level2EventHandler.h"
+#include "Level2UpdateStrategy.h"
+#include "Level3EventHandler.h"
+#include "Level3UpdateStrategy.h"
+#include "ImGuiWindowBuilder.h"
 #include "ImGuiWindow.h"
-#include "LevelUpdateStrategy.h"
 
 Screen::Screen(Game* game, pugi::xml_node const &node) :
 	game{game}
@@ -17,6 +24,7 @@ Screen::Screen(Game* game, pugi::xml_node const &node) :
 	auto red = node.attribute("r");
 	auto green = node.attribute("g");
 	auto blue = node.attribute("b");
+
 	if (red && green && blue) {
 
 		backgroundColor = sf::Color(red.as_int(), green.as_int(), blue.as_int());
@@ -28,18 +36,48 @@ Screen::Screen(Game* game, pugi::xml_node const &node) :
 
 	}
 
+	if (!strcmp(node.attribute("event_handler").as_string(), "win_lose")) {
+
+		eventHandler = std::move(std::make_unique<WinLoseEventHandler>());
+
+	}
+	else if (!strcmp(node.attribute("event_handler").as_string(), "level1")) {
+
+		eventHandler = std::move(std::make_unique<Level1EventHandler>());
+
+	}
+	else if (!strcmp(node.attribute("event_handler").as_string(), "level2")) {
+
+		eventHandler = std::move(std::make_unique<Level2EventHandler>());
+
+	}
+	else if (!strcmp(node.attribute("event_handler").as_string(), "level3")) {
+
+		eventHandler = std::move(std::make_unique<Level3EventHandler>());
+
+	}
+	else { eventHandler = nullptr; }
 
 	if (!strcmp(node.attribute("update_strategy").as_string(), "win_lose")) {
 
 		updateStrategy = std::move(std::make_unique<WinLoseUpdateStrategy>());
 
 	}
-	else if (!strcmp(node.attribute("update_strategy").as_string(), "levelSimple")) {
+	else if (!strcmp(node.attribute("update_strategy").as_string(), "level1")) {
 
-		updateStrategy = std::move(std::make_unique<LevelUpdateStrategy>());
+		updateStrategy = std::move(std::make_unique<Level1UpdateStrategy>());
 
 	}
-	else { updateStrategy = nullptr; }
+	else if (!strcmp(node.attribute("update_strategy").as_string(), "level2")) {
+
+		updateStrategy = std::move(std::make_unique<Level2UpdateStrategy>());
+
+	}
+	else if (!strcmp(node.attribute("update_strategy").as_string(), "level3")) {
+
+		updateStrategy = std::move(std::make_unique<Level3UpdateStrategy>());
+	}
+	else { eventHandler = nullptr; }
 
 	for (auto& child : node.children()) {
 
@@ -65,7 +103,23 @@ Screen::Screen(Game* game, pugi::xml_node const &node) :
 		}
 		else if (!strcmp(child.name(), "imgui")) {
 
-			auto window = ImGuiWindow(child.attribute("title").as_string());
+			ImGuiWindowBuilder builder;
+
+			auto ptr = builder.withTitle(child.attribute("title").as_string())->withContent(child.text().as_string());
+
+			auto floatInput = child.attribute("float_input_label");
+			auto intInput = child.attribute("int_input_label");
+			auto textInput = child.attribute("text_input_label");
+			auto button = child.attribute("button_label");
+			auto menu = child.attribute("menu");
+
+			if (floatInput) { ptr->withInputFloat(floatInput.as_string()); }
+			if (intInput) { ptr->withInputInt(intInput.as_string()); }
+			if (textInput) { ptr->withInputText(textInput.as_string()); }
+			if (button) { ptr->withButton(button.as_string()); }
+			if (menu && !strcmp(menu.as_string(), "true")) { ptr->withMenu(); }
+
+			auto window = ptr->build();
 
 			window.setX(child.attribute("x").as_float());
 			window.setY(child.attribute("y").as_float());
@@ -73,25 +127,20 @@ Screen::Screen(Game* game, pugi::xml_node const &node) :
 			window.setWidth(child.attribute("width").as_float());
 			window.setHeight(child.attribute("height").as_float());
 
-			for (pugi::xml_node tool = child.child("int"); tool; tool = tool.next_sibling("int"))
-			{
-				window.addInputInt(tool.attribute("title").as_string(), tool.attribute("expected").as_int());
-			}
-			for (pugi::xml_node tool = child.child("float"); tool; tool = tool.next_sibling("int"))
-			{
-				window.addInputFloat(tool.attribute("title").as_string(), tool.attribute("expected").as_float());
-			}
 			addElement(std::move(std::make_unique<ImGuiWindow>(window)));
+
 		}
 
 	}
 
 }
 
-Screen::Screen(Game* game, std::unique_ptr<LevelUpdateStrategy> updateStrategy, sf::Color const &backgroundColor) :
+Screen::Screen(Game* game, std::unique_ptr<EventHandler> eventHandler, std::unique_ptr<UpdateStrategy> updateStrategy, sf::Color const &backgroundColor) :
 	game{ game },
 	backgroundColor{ backgroundColor }
 {
+
+	this->eventHandler = std::move(eventHandler);
 	this->updateStrategy = std::move(updateStrategy);
 
 }
@@ -111,14 +160,8 @@ void Screen::render(sf::RenderWindow& window) const {
 }
 
 void Screen::handleEvent(const sf::Event& event, sf::RenderWindow& window) {
-	
-	for (auto& element : elements) {
-		std::vector<std::shared_ptr<EventHandler>> eventHandlers = element->getEventHandlers();
-		for (auto& eventHandler : eventHandlers) {
-			eventHandler->handle(std::move(element),*this, event, window);
 
-		}
-	}
+	eventHandler->handle(*this, event, window);
 
 }
 

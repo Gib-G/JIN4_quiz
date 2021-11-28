@@ -1,11 +1,11 @@
-#include "LevelUpdateStrategy.h"
+#include "Level1UpdateStrategy.h"
 #include "Screen.h"
 #include "Game.h"
 #include "Menu.h"
 
-Screen* LevelUpdateStrategy::update(Screen &screen) {
+Screen* Level1UpdateStrategy::update(Screen &screen) {
 
-	/* Vérifier la condition de victoire du niveau 2 ici. */
+	/* Vérifier la condition de victoire du niveau 1 ici. */
 	if (screen.isCompleted() ) {
 
 		/* Autres choses ici, si besoin  */
@@ -15,10 +15,8 @@ Screen* LevelUpdateStrategy::update(Screen &screen) {
 		*/
 		screen.getGame()->nextLevel();
 
-		if (screen.getGame()->hasNextLevel()) {
-			return screen.getGame()->getMenu(Menu::WIN);
-		}
-		return screen.getGame()->getMenu(Menu::BYE);
+		/* On retourne un poiteur vers le nouveau niveau courant (le niveau suivant). */
+		return screen.getGame()->getMenu(Menu::WIN);
 
 	}
 	else if (screen.isFailed()) {
@@ -29,6 +27,9 @@ Screen* LevelUpdateStrategy::update(Screen &screen) {
 
 	}
 
+	/* Mises-à-jour spontanées du niveau 1 ici. */
+
+	/* Après les modifications, on retourne un poiteur vers l'écran courant. */
 	return &screen;
 
 }

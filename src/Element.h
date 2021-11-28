@@ -1,8 +1,6 @@
 #pragma once
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <string>
-#include <vector>
-#include "EventHandler.h"
 
 class Element {
 
@@ -24,11 +22,6 @@ public:
 	*/
 	virtual void render(sf::RenderWindow& window) = 0;
 
-	/*Cette fonction est utile pour la fenêtre ImGui,
-	* Elle vérifie si chaque input est égale à la valeur attendue
-	*/
-	virtual bool verify() = 0;
-
 	/* Permet de savoir si le point de coordonnées
 	(x, y, z) se trouve dans l'élément.
 	Pour les éléments 2D, la coordonnée z est inutile.
@@ -36,8 +29,6 @@ public:
 	virtual bool contains(const float x, const float y) const;
 
 	void setAngle(const float angle);
-
-	std::vector<std::shared_ptr<EventHandler>> getEventHandlers() const;
 
 protected:
 
@@ -51,11 +42,6 @@ protected:
 	std::string name;
 
 	float angle = 0;
-
-	/* La liste des gestionnaires d'événements utilisateur affectés
-	à l'élément.
-	*/
-	std::vector<std::shared_ptr<EventHandler>> eventHandlers;
 
 };
 

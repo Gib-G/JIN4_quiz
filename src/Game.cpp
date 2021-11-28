@@ -52,6 +52,12 @@ void Game::init() {
 
 }
 
+sf::RenderWindow* Game::getWindow() const {
+
+	return window.get();
+
+}
+
 Screen* Game::getMenu(const int id) const { 
 
 	auto entry = menus.find(id);
@@ -89,10 +95,3 @@ void Game::nextLevel() {
 	currentLevel++;
 
 }
-
-bool Game::hasNextLevel() const
-{
-	return (currentLevel < levels.size());
-}
-
-

@@ -5,6 +5,7 @@
 #include "UpdateStrategy.h"
 #include "EventHandler.h"
 #include "ImGuiWindow.h"
+#include "ImGuiWindowBuilder.h"
 
 #define WIDTH 640
 #define HEIGHT 480
