@@ -70,4 +70,5 @@ The libraries folder holds other dependencies.
  
 # How to use?
 
-Either use the provided executables (if you are a lucky Windows x64 user). Otherwise, use CMake and then build with Visual Studio for instance. When building the executable, you are looking for one called mainLauncher.
+Either use the provided executables (if you are a lucky Windows x64 user). Otherwise, use CMake and then build with Visual Studio for instance. When building the executable, you are looking for one called mainLauncher. <br>
+Please note that the executables need the resources folder to be located in the same directory as them.
