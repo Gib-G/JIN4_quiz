@@ -49,7 +49,7 @@ Another issue we had is that we could only bound one event handler and one updat
 
 Here is a rough class diagram of the main classes for version 1:
 
-<img src="" alt="Rough class diagram for the first version of the game">
+<img src="./v1_class_diagram" alt="Rough class diagram for the first version of the game">
 
 With all those issues, we later worked on a second version of the game whose source code is available on the v2 branch. As we did not have much time to work on this version, it is not especially well implemented, and is still incomplete. It is still playable however.
 
